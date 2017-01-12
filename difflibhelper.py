@@ -10,7 +10,7 @@ __version__ = '1.0.0'
 __version_info__ = tuple([int(num) for num in __version__.split('.')])
 __maintainer__ = 'Benjamin P. Trachtenberg'
 __email__ = 'e_ben_75-python@yahoo.com'
-__status__ = 'Production'
+__status__ = 'Development'
 LOGGER = logging.getLogger(__name__)
 GLOBAL_LINE_NUMBER_FORMAT = '%04d'
 
@@ -200,22 +200,22 @@ def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_
     for line_numbered_orig_pre_list, line_numbered_orig_post_list in itertools.zip_longest(numbered_orig_pre_list, numbered_orig_post_list):
         try:
             if line_numbered_orig_pre_list[:4] not in pre_line_changes and line_numbered_orig_post_list[:4] not in post_line_changes:
-                temp_csv_list.append(',{pre_line},{pre_line_data},,{post_line},{post_line_data}'.format(
+                temp_csv_list.append(',"{pre_line}","{pre_line_data}",,"{post_line}","{post_line_data}"'.format(
                     pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:],
                     post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
 
             elif line_numbered_orig_pre_list[:4] in pre_line_changes and line_numbered_orig_post_list[:4] in post_line_changes:
-                temp_csv_list.append('changed,{pre_line},{pre_line_data},changed,{post_line},{post_line_data}'.format(
+                temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,"{post_line}","{post_line_data}"'.format(
                     pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:],
                     post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
 
             elif line_numbered_orig_pre_list[:4] in pre_line_changes and line_numbered_orig_post_list[:4] not in post_line_changes:
-                temp_csv_list.append('changed,{pre_line},{pre_line_data},changed,{post_line},{post_line_data}'.format(
+                temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,"{post_line}","{post_line_data}"'.format(
                     pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:],
                     post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
 
             elif line_numbered_orig_pre_list[:4] not in pre_line_changes and line_numbered_orig_post_list[:4] in post_line_changes:
-                temp_csv_list.append('changed,{pre_line},{pre_line_data},changed,{post_line},{post_line_data}'.format(
+                temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,"{post_line}","{post_line_data}"'.format(
                     pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:],
                     post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
 
@@ -226,7 +226,7 @@ def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_
 
             except TypeError as e:
                 LOGGER.warning('Function get_a_csv_diff error with pre_list not able to get numbers {e}'.format(e=e))
-                temp_csv_list.append('changed,,,changed,{post_line},{post_line_data}'.format(
+                temp_csv_list.append('changed,,,changed,"{post_line}","{post_line_data}"'.format(
                     post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
 
             try:
@@ -234,7 +234,7 @@ def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_
 
             except TypeError:
                 LOGGER.warning('Function get_a_csv_diff error with post_list not able to get numbers {e}'.format(e=e))
-                temp_csv_list.append('changed,{pre_line},{pre_line_data},changed,,'.format(
+                temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,,'.format(
                     pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:]))
 
     return temp_csv_list
