@@ -209,6 +209,18 @@ def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_
                     pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:],
                     post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
 
+            elif line_numbered_orig_pre_list[:4] in pre_line_changes and line_numbered_orig_post_list[:4] not in post_line_changes:
+                temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,"{post_line}","{post_line_data}"'.format(
+                    pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:],
+                    post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
+
+            elif line_numbered_orig_pre_list[:4] not in pre_line_changes and line_numbered_orig_post_list[:4] in post_line_changes:
+                temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,"{post_line}","{post_line_data}"'.format(
+                    pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:],
+                    post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
+
+        except TypeError as e:
+            LOGGER.warning('Function get_a_csv_diff error {e}'.format(e=e))
             try:
                 line_numbered_orig_pre_list[:4]
 
@@ -224,9 +236,6 @@ def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_
                 LOGGER.warning('Function get_a_csv_diff error with post_list not able to get numbers {e}'.format(e=e))
                 temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,,'.format(
                     pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:]))
-
-        except TypeError as e:
-            LOGGER.warning('Function get_a_csv_diff error {e}'.format(e=e))
 
 
     return temp_csv_list
