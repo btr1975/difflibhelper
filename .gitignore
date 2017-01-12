@@ -87,3 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# No files ending in tilde
+*~
+
+# No JetBrains
+.idea/
