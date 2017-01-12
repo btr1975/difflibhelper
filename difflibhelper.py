@@ -172,6 +172,33 @@ def extract_just_line_number(orig_list):
     return temp_list
 
 
+def extract_add_subtract_line_number(orig_list):
+    """
+    Function to get + or - and line numbers
+    :param orig_list:
+    :return:
+        A Dictionary
+
+    """
+    LOGGER.debug('Starting Function extract_add_subtract_line_number')
+    temp_dict = dict()
+    key = 1
+    for line in orig_list:
+        if line[:4] == '----':
+            continue
+
+        elif line[:4] in ('PRE ', 'POST', '< - '):
+            continue
+
+        elif line[:4] == '\n':
+            continue
+
+        temp_dict[key] = {'line': line[1:5], 'as': line[:1], 'line_data': line[6:]}
+        key += 1
+
+    return temp_dict
+
+
 def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_name=None):
     """
     Function to build a csv of pre and post files
@@ -190,6 +217,9 @@ def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_
     numbered_orig_post_list = list_with_line_numbers(post_list)
     pre_list_diff, post_list_diff, *garbage = list_of_diffs_pre_post(pre_list, post_list, pre_list_file_name,
                                                                      post_list_file_name)
+
+    lines_orig_pre_list = extract_just_line_number(numbered_orig_pre_list)
+    lines_orig_post_list = extract_just_line_number(numbered_orig_post_list)
 
     pre_line_changes = extract_just_line_number(pre_list_diff)
 
@@ -210,18 +240,33 @@ def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_
                     post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
 
             elif line_numbered_orig_pre_list[:4] in pre_line_changes and line_numbered_orig_post_list[:4] not in post_line_changes:
-                temp_csv_list.append('changed,,,changed,"{post_line}","{post_line_data}"'.format(
-                    post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
+                if line_numbered_orig_pre_list[:4] in lines_orig_post_list:
+                    temp_csv_list.append(',"{pre_line}","{pre_line_data}",,"{post_line}","{post_line_data}"'.format(
+                        pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:],
+                        post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
 
-                temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,,'.format(
-                    pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:]))
+                else:
+
+                    temp_csv_list.append('changed,,,changed,"{post_line}","{post_line_data}"'.format(
+                        post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
+
+                    temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,,'.format(
+                        pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:]))
 
             elif line_numbered_orig_pre_list[:4] not in pre_line_changes and line_numbered_orig_post_list[:4] in post_line_changes:
-                temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,,'.format(
-                    pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:]))
+                if line_numbered_orig_post_list[:4] in lines_orig_pre_list:
+                    if line_numbered_orig_pre_list[:4] in lines_orig_post_list:
+                        temp_csv_list.append(',"{pre_line}","{pre_line_data}",,"{post_line}","{post_line_data}"'.format(
+                            pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:],
+                            post_line=line_numbered_orig_post_list[:4],
+                            post_line_data=line_numbered_orig_post_list[5:]))
 
-                temp_csv_list.append('changed,,,changed,"{post_line}","{post_line_data}"'.format(
-                    post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
+                else:
+                    temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,,'.format(
+                        pre_line=line_numbered_orig_pre_list[:4], pre_line_data=line_numbered_orig_pre_list[5:]))
+
+                    temp_csv_list.append('changed,,,changed,"{post_line}","{post_line_data}"'.format(
+                        post_line=line_numbered_orig_post_list[:4], post_line_data=line_numbered_orig_post_list[5:]))
 
         except TypeError as e:
             LOGGER.warning('Function get_a_csv_diff error {e}'.format(e=e))
