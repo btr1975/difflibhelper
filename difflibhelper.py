@@ -256,7 +256,7 @@ def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_
 
             elif pre_queue[0][:4] in pre_line_changes and post_queue[0][:4] not in post_line_changes:
                 if pre_queue[0][:4] in lines_orig_post_list:
-                    temp_csv_list.append('change,"{pre_line}","{pre_line_data}",change,,'.format(
+                    temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,,'.format(
                         pre_line=pre_queue[0][:4], pre_line_data=pre_queue[0][5:]))
 
                     pre_queue.pop(0)
@@ -264,17 +264,10 @@ def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_
             elif pre_queue[0][:4] not in pre_line_changes and post_queue[0][:4] in post_line_changes:
                 if post_queue[0][:4] in lines_orig_pre_list:
                     if pre_queue[0][:4] in lines_orig_post_list:
-                        temp_csv_list.append('change,,,changed,"{post_line}","{post_line_data}"'.format(
+                        temp_csv_list.append('changed,,,changed,"{post_line}","{post_line_data}"'.format(
                             post_line=post_queue[0][:4], post_line_data=post_queue[0][5:]))
 
                         post_queue.pop(0)
-
-                else:
-                    temp_csv_list.append('changed,"{pre_line}","{pre_line_data}",changed,,'.format(
-                        pre_line=pre_queue[0][:4], pre_line_data=pre_queue[0][5:]))
-
-                    temp_csv_list.append('changed,,,changed,"{post_line}","{post_line_data}"'.format(
-                        post_line=post_queue[0][:4], post_line_data=post_queue[0][5:]))
 
         except TypeError as e:
             LOGGER.warning('Function get_a_csv_diff error {e}'.format(e=e))
