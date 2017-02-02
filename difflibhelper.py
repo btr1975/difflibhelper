@@ -6,7 +6,7 @@ __author__ = 'Benjamin P. Trachtenberg'
 __copyright__ = "Copyright (c) 2017, Benjamin P. Trachtenberg"
 __credits__ = 'Benjamin P. Trachtenberg'
 __license__ = ''
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __version_info__ = tuple([int(num) for num in __version__.split('.')])
 __maintainer__ = 'Benjamin P. Trachtenberg'
 __email__ = 'e_ben_75-python@yahoo.com'
@@ -288,3 +288,92 @@ def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_
                     pre_line=pre_queue[0][:4], pre_line_data=pre_queue[0][5:]))
 
     return temp_csv_list
+
+
+def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_name=None):
+    """
+    Function to build a data set diff of pre and post files
+    :param pre_list:
+    :param post_list:
+    :param pre_list_file_name:
+    :param post_list_file_name:
+    :return:
+        A data set list
+
+    """
+    LOGGER.debug('Starting Function get_a_csv_diff')
+    temp_list = list()
+    pre_queue = list()
+    post_queue = list()
+
+    numbered_orig_pre_list = list_with_line_numbers(pre_list)
+    numbered_orig_post_list = list_with_line_numbers(post_list)
+
+    pre_list_diff, post_list_diff, *garbage = list_of_diffs_pre_post(pre_list, post_list, pre_list_file_name,
+                                                                     post_list_file_name)
+
+    lines_orig_pre_list = extract_just_line_number(numbered_orig_pre_list)
+    lines_orig_post_list = extract_just_line_number(numbered_orig_post_list)
+
+    pre_line_changes = extract_just_line_number(pre_list_diff)
+
+    post_line_changes = extract_just_line_number(post_list_diff)
+
+    temp_list.append(('CHANGE_PRE', 'CHANGE_PRE_LINE_NUMBER', 'CHANGE_PRE_LINE_DATA', 'CHANGE_POST',
+                      'CHANGE_POST_LINE_NUMBER', 'CHANGE_POST_LINE_DATA'))
+
+    for line_numbered_orig_pre_list, line_numbered_orig_post_list in itertools.zip_longest(numbered_orig_pre_list,
+                                                                                           numbered_orig_post_list):
+        pre_queue.append(line_numbered_orig_pre_list)
+        post_queue.append(line_numbered_orig_post_list)
+
+        try:
+            if pre_queue[0][:4] not in pre_line_changes and post_queue[0][:4] not in post_line_changes:
+                data_set = ('', pre_queue[0][:4], pre_queue[0][5:], '', post_queue[0][:4], post_queue[0][5:])
+                temp_list.append(data_set)
+
+                pre_queue.pop(0)
+                post_queue.pop(0)
+
+            elif pre_queue[0][:4] in pre_line_changes and post_queue[0][:4] in post_line_changes:
+                data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', post_queue[0][:4],
+                            post_queue[0][5:])
+                temp_list.append(data_set)
+
+                pre_queue.pop(0)
+                post_queue.pop(0)
+
+            elif pre_queue[0][:4] in pre_line_changes and post_queue[0][:4] not in post_line_changes:
+                if pre_queue[0][:4] in lines_orig_post_list:
+                    data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
+                    temp_list.append(data_set)
+
+                    pre_queue.pop(0)
+
+            elif pre_queue[0][:4] not in pre_line_changes and post_queue[0][:4] in post_line_changes:
+                if post_queue[0][:4] in lines_orig_pre_list:
+                    if pre_queue[0][:4] in lines_orig_post_list:
+                        data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
+                        temp_list.append(data_set)
+
+                        post_queue.pop(0)
+
+        except TypeError as e:
+            LOGGER.warning('Function get_a_csv_diff error {e}'.format(e=e))
+            try:
+                pre_queue[0][:4]
+
+            except TypeError as e:
+                LOGGER.warning('Function get_a_csv_diff error with pre_list not able to get numbers {e}'.format(e=e))
+                data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
+                temp_list.append(data_set)
+
+            try:
+                post_queue[0][:4]
+
+            except TypeError as e:
+                LOGGER.warning('Function get_a_csv_diff error with post_list not able to get numbers {e}'.format(e=e))
+                data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
+                temp_list.append(data_set)
+
+    return temp_list
