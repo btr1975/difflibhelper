@@ -327,7 +327,7 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
         pre_queue.append(line_numbered_orig_pre_list)
         post_queue.append(line_numbered_orig_post_list)
 
-        LOGGER.debug('Function get_a_data_set_diff pre_queue length {preql} post_queue length {postql}'.format(
+        LOGGER.debug('Function pre get_a_data_set_diff pre_queue length {preql} post_queue length {postql}'.format(
             preql=len(pre_queue), postql=len(post_queue)))
 
         try:
@@ -399,7 +399,100 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
                 data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
                 temp_list.append(data_set)
 
-        LOGGER.debug('Function get_a_data_set_diff pre_queue length {preql} post_queue length {postql}'.format(
+        LOGGER.debug('Function post get_a_data_set_diff pre_queue length {preql} post_queue length {postql}'.format(
+            preql=len(pre_queue), postql=len(post_queue)))
+
+    while len(pre_queue) > 0 or len(post_queue) > 0:
+        temp_list += queue_drain(pre_queue, post_queue, pre_line_changes, post_line_changes, lines_orig_pre_list,
+                                 lines_orig_post_list)
+
+    return temp_list
+
+
+def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_changes, lines_orig_pre_list,
+                lines_orig_post_list):
+    LOGGER.debug('Starting Function queue_drain')
+    temp_list = list()
+    pre_queue = list()
+    post_queue = list()
+    for line_numbered_orig_pre_list, line_numbered_orig_post_list in itertools.zip_longest(orig_pre_list,
+                                                                                           orig_post_list):
+        pre_queue.append(line_numbered_orig_pre_list)
+        post_queue.append(line_numbered_orig_post_list)
+
+        LOGGER.debug('Function pre queue_drain pre_queue length {preql} post_queue length {postql}'.format(
+            preql=len(pre_queue), postql=len(post_queue)))
+
+        try:
+            if pre_queue[0][:4] not in pre_line_changes and post_queue[0][:4] not in post_line_changes:
+                LOGGER.debug('Function queue_drain pre_queue not in pre_line_changes post_queue not in '
+                             'post_line_changes PRE: {pre_queue_data} '
+                             'POST: {post_queue_data}'.format(pre_queue_data=pre_queue[0],
+                                                              post_queue_data=post_queue[0]))
+
+                data_set = ('', pre_queue[0][:4], pre_queue[0][5:], '', post_queue[0][:4], post_queue[0][5:])
+                temp_list.append(data_set)
+
+                pre_queue.pop(0)
+                post_queue.pop(0)
+
+            elif pre_queue[0][:4] in pre_line_changes and post_queue[0][:4] in post_line_changes:
+                LOGGER.debug('Function queue_drain pre_queue in pre_line_changes post_queue in '
+                             'post_line_changes PRE: {pre_queue_data} '
+                             'POST: {post_queue_data}'.format(pre_queue_data=pre_queue[0],
+                                                              post_queue_data=post_queue[0]))
+
+                data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', post_queue[0][:4],
+                            post_queue[0][5:])
+                temp_list.append(data_set)
+
+                pre_queue.pop(0)
+                post_queue.pop(0)
+
+            elif pre_queue[0][:4] in pre_line_changes and post_queue[0][:4] not in post_line_changes:
+                LOGGER.debug('Function queue_drain pre_queue in pre_line_changes post_queue not in '
+                             'post_line_changes PRE: {pre_queue_data} POST: {post_queue_data}'.format(
+                    pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
+
+                if pre_queue[0][:4] in lines_orig_post_list:
+                    data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
+                    temp_list.append(data_set)
+
+                    pre_queue.pop(0)
+
+            elif pre_queue[0][:4] not in pre_line_changes and post_queue[0][:4] in post_line_changes:
+                LOGGER.debug('Function queue_drain pre_queue not in pre_line_changes post_queue in '
+                             'post_line_changes PRE: {pre_queue_data} POST: {post_queue_data}'.format(
+                    pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
+
+                if post_queue[0][:4] in lines_orig_pre_list:
+                    if pre_queue[0][:4] in lines_orig_post_list:
+                        data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
+                        temp_list.append(data_set)
+
+                        post_queue.pop(0)
+
+        except TypeError as e:
+            LOGGER.warning('Function queue_drain error {e}'.format(e=e))
+            try:
+                pre_queue[0][:4]
+
+            except TypeError as e:
+                LOGGER.warning('Function queue_drain error with pre_list not able to get numbers '
+                               '{e}'.format(e=e))
+                data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
+                temp_list.append(data_set)
+
+            try:
+                post_queue[0][:4]
+
+            except TypeError as e:
+                LOGGER.warning('Function queue_drain error with post_list not able to get numbers '
+                               '{e}'.format(e=e))
+                data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
+                temp_list.append(data_set)
+
+        LOGGER.debug('Function post queue_drain pre_queue length {preql} post_queue length {postql}'.format(
             preql=len(pre_queue), postql=len(post_queue)))
 
     return temp_list
