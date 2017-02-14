@@ -403,8 +403,9 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
             preql=len(pre_queue), postql=len(post_queue)))
 
     while len(pre_queue) > 0 or len(post_queue) > 0:
-        temp_list += queue_drain(pre_queue, post_queue, pre_line_changes, post_line_changes, lines_orig_pre_list,
-                                 lines_orig_post_list)
+        temp_list_drain, pre_queue, post_queue = queue_drain(pre_queue, post_queue, pre_line_changes, post_line_changes, lines_orig_pre_list, lines_orig_post_list)
+        temp_list += temp_list_drain
+        temp_list_drain.clear()
 
     return temp_list
 
@@ -480,8 +481,7 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
             except TypeError as e:
                 LOGGER.warning('Function queue_drain error with pre_list not able to get numbers '
                                '{e}'.format(e=e))
-                data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
-                temp_list.append(data_set)
+                pre_queue.clear()
 
             try:
                 post_queue[0][:4]
@@ -489,10 +489,9 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
             except TypeError as e:
                 LOGGER.warning('Function queue_drain error with post_list not able to get numbers '
                                '{e}'.format(e=e))
-                data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
-                temp_list.append(data_set)
+                post_queue.clear()
 
         LOGGER.debug('Function post queue_drain pre_queue length {preql} post_queue length {postql}'.format(
             preql=len(pre_queue), postql=len(post_queue)))
 
-    return temp_list
+    return temp_list, pre_queue, post_queue
