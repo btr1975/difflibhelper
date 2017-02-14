@@ -6,7 +6,7 @@ __author__ = 'Benjamin P. Trachtenberg'
 __copyright__ = "Copyright (c) 2017, Benjamin P. Trachtenberg"
 __credits__ = 'Benjamin P. Trachtenberg'
 __license__ = ''
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __version_info__ = tuple([int(num) for num in __version__.split('.')])
 __maintainer__ = 'Benjamin P. Trachtenberg'
 __email__ = 'e_ben_75-python@yahoo.com'
@@ -348,7 +348,7 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
                     data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
                     temp_list.append(data_set)
 
-                    pre_queue.pop(0)
+                pre_queue.pop(0)
 
             elif pre_queue[0][:4] not in pre_line_changes and post_queue[0][:4] in post_line_changes:
                 if post_queue[0][:4] in lines_orig_pre_list:
@@ -356,7 +356,7 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
                         data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
                         temp_list.append(data_set)
 
-                        post_queue.pop(0)
+                    post_queue.pop(0)
 
         except TypeError as e:
             LOGGER.warning('Function get_a_csv_diff error {e}'.format(e=e))
