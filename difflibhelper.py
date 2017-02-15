@@ -373,11 +373,10 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
                     pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
 
                 if post_queue[0][:4] in lines_orig_pre_list:
-                    if pre_queue[0][:4] in lines_orig_post_list:
-                        data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
-                        temp_list.append(data_set)
+                    data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
+                    temp_list.append(data_set)
 
-                        post_queue.pop(0)
+                    post_queue.pop(0)
 
         except TypeError as e:
             LOGGER.warning('Function get_a_data_set_diff error {e}'.format(e=e))
