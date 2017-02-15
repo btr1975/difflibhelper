@@ -481,6 +481,8 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
             except TypeError as e:
                 LOGGER.warning('Function queue_drain error with pre_list not able to get numbers '
                                '{e}'.format(e=e))
+                LOGGER.debug('Function post queue_drain pre_queue length {preql} post_queue length {postql}'.format(
+                    preql=len(pre_queue), postql=len(post_queue)))
                 pre_queue.clear()
                 post_queue.clear()
 
@@ -490,6 +492,8 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
             except TypeError as e:
                 LOGGER.warning('Function queue_drain error with post_list not able to get numbers '
                                '{e}'.format(e=e))
+                LOGGER.debug('Function post queue_drain pre_queue length {preql} post_queue length {postql}'.format(
+                    preql=len(pre_queue), postql=len(post_queue)))
                 pre_queue.clear()
                 post_queue.clear()
 
