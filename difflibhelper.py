@@ -412,8 +412,8 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
 
 def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_changes, lines_orig_pre_list,
                 lines_orig_post_list):
-    print('entry orig_pre_list = {orig_pre_list}'.format(orig_pre_list=orig_pre_list))
-    print('entry orig_post_list = {orig_post_list}'.format(orig_post_list=orig_post_list))
+    LOGGER.debug('entry orig_pre_list = {orig_pre_list}'.format(orig_pre_list=orig_pre_list))
+    LOGGER.debug('entry orig_post_list = {orig_post_list}'.format(orig_post_list=orig_post_list))
     LOGGER.debug('Starting Function queue_drain')
     temp_list = list()
     pre_queue = list()
@@ -505,7 +505,7 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
         LOGGER.debug('Function post queue_drain pre_queue length {preql} post_queue length {postql}'.format(
             preql=len(pre_queue), postql=len(post_queue)))
 
-        print('exit orig_pre_list = {orig_pre_list}'.format(orig_pre_list=orig_pre_list))
-        print('exit orig_post_list = {orig_post_list}'.format(orig_post_list=orig_post_list))
+        LOGGER.debug('exit orig_pre_list = {orig_pre_list}'.format(orig_pre_list=orig_pre_list))
+        LOGGER.debug('exit orig_post_list = {orig_post_list}'.format(orig_post_list=orig_post_list))
 
     return temp_list, pre_queue, post_queue
