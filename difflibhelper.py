@@ -412,8 +412,6 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
 
 def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_changes, lines_orig_pre_list,
                 lines_orig_post_list):
-    LOGGER.debug('entry orig_pre_list = {orig_pre_list}'.format(orig_pre_list=orig_pre_list))
-    LOGGER.debug('entry orig_post_list = {orig_post_list}'.format(orig_post_list=orig_post_list))
     LOGGER.debug('Starting Function queue_drain')
     temp_list = list()
     pre_queue = list()
@@ -422,6 +420,8 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
                                                                                            orig_post_list):
         pre_queue.append(line_numbered_orig_pre_list)
         post_queue.append(line_numbered_orig_post_list)
+        LOGGER.debug('top pre_queue = {pre_queue}'.format(pre_queue=pre_queue))
+        LOGGER.debug('top post_queue = {post_queue}'.format(post_queue=post_queue))
 
         LOGGER.debug('Function pre queue_drain pre_queue length {preql} post_queue length {postql}'.format(
             preql=len(pre_queue), postql=len(post_queue)))
@@ -505,7 +505,10 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
         LOGGER.debug('Function post queue_drain pre_queue length {preql} post_queue length {postql}'.format(
             preql=len(pre_queue), postql=len(post_queue)))
 
-    LOGGER.debug('exit orig_pre_list = {orig_pre_list}'.format(orig_pre_list=orig_pre_list))
-    LOGGER.debug('exit orig_post_list = {orig_post_list}'.format(orig_post_list=orig_post_list))
+        LOGGER.debug('bottom pre_queue = {pre_queue}'.format(pre_queue=pre_queue))
+        LOGGER.debug('bottom post_queue = {post_queue}'.format(post_queue=post_queue))
+
+    LOGGER.debug('ending pre_queue = {pre_queue}'.format(pre_queue=pre_queue))
+    LOGGER.debug('ending post_queue = {post_queue}'.format(post_queue=post_queue))
 
     return temp_list, pre_queue, post_queue
