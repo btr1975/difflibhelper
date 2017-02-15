@@ -483,7 +483,7 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
                 LOGGER.warning('Function queue_drain error with pre_list not able to get numbers '
                                '{e}'.format(e=e))
                 for line in post_queue:
-                    data_set = ('changed', '', '', 'changed', line[0][:4], line[0][5:])
+                    data_set = ('changed', '', '', 'changed', line[:4], line[5:])
                     temp_list.append(data_set)
                 pre_queue.clear()
                 post_queue.clear()
@@ -497,7 +497,7 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
                     LOGGER.warning('Function queue_drain error with post_list not able to get numbers '
                                    '{e}'.format(e=e))
                     for line in pre_queue:
-                        data_set = ('changed', '', '', 'changed', line[0][:4], line[0][5:])
+                        data_set = ('changed', '', '', 'changed', line[:4], line[5:])
                         temp_list.append(data_set)
                     pre_queue.clear()
                     post_queue.clear()
