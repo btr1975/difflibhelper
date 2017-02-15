@@ -505,7 +505,7 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
         LOGGER.debug('Function post queue_drain pre_queue length {preql} post_queue length {postql}'.format(
             preql=len(pre_queue), postql=len(post_queue)))
 
-        LOGGER.debug('exit orig_pre_list = {orig_pre_list}'.format(orig_pre_list=orig_pre_list))
-        LOGGER.debug('exit orig_post_list = {orig_post_list}'.format(orig_post_list=orig_post_list))
+    LOGGER.debug('exit orig_pre_list = {orig_pre_list}'.format(orig_pre_list=orig_pre_list))
+    LOGGER.debug('exit orig_post_list = {orig_post_list}'.format(orig_post_list=orig_post_list))
 
     return temp_list, pre_queue, post_queue
