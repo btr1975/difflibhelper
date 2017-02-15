@@ -10,7 +10,7 @@ __version__ = '1.0.3'
 __version_info__ = tuple([int(num) for num in __version__.split('.')])
 __maintainer__ = 'Benjamin P. Trachtenberg'
 __email__ = 'e_ben_75-python@yahoo.com'
-__status__ = 'Development'
+__status__ = 'Production'
 LOGGER = logging.getLogger(__name__)
 GLOBAL_LINE_NUMBER_FORMAT = '%04d'
 
@@ -312,9 +312,6 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
     pre_list_diff, post_list_diff, *garbage = list_of_diffs_pre_post(pre_list, post_list, pre_list_file_name,
                                                                      post_list_file_name)
 
-    lines_orig_pre_list = extract_just_line_number(numbered_orig_pre_list)
-    lines_orig_post_list = extract_just_line_number(numbered_orig_post_list)
-
     pre_line_changes = extract_just_line_number(pre_list_diff)
 
     post_line_changes = extract_just_line_number(post_list_diff)
@@ -359,24 +356,22 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
             elif pre_queue[0][:4] in pre_line_changes and post_queue[0][:4] not in post_line_changes:
                 LOGGER.debug('Function get_a_data_set_diff pre_queue in pre_line_changes post_queue not in '
                              'post_line_changes PRE: {pre_queue_data} POST: {post_queue_data}'.format(
-                    pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
+                              pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
 
-                if pre_queue[0][:4] in lines_orig_post_list:
-                    data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
-                    temp_list.append(data_set)
+                data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
+                temp_list.append(data_set)
 
-                    pre_queue.pop(0)
+                pre_queue.pop(0)
 
             elif pre_queue[0][:4] not in pre_line_changes and post_queue[0][:4] in post_line_changes:
                 LOGGER.debug('Function get_a_data_set_diff pre_queue not in pre_line_changes post_queue in '
                              'post_line_changes PRE: {pre_queue_data} POST: {post_queue_data}'.format(
-                    pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
+                              pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
 
-                if post_queue[0][:4] in lines_orig_pre_list:
-                    data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
-                    temp_list.append(data_set)
+                data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
+                temp_list.append(data_set)
 
-                    post_queue.pop(0)
+                post_queue.pop(0)
 
         except TypeError as e:
             LOGGER.warning('Function get_a_data_set_diff error {e}'.format(e=e))
@@ -402,15 +397,14 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
             preql=len(pre_queue), postql=len(post_queue)))
 
     while len(pre_queue) > 0 or len(post_queue) > 0:
-        temp_list_drain, pre_queue, post_queue = queue_drain(pre_queue, post_queue, pre_line_changes, post_line_changes, lines_orig_pre_list, lines_orig_post_list)
+        temp_list_drain, pre_queue, post_queue = queue_drain(pre_queue, post_queue, pre_line_changes, post_line_changes)
         temp_list += temp_list_drain
         temp_list_drain.clear()
 
     return temp_list
 
 
-def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_changes, lines_orig_pre_list,
-                lines_orig_post_list):
+def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_changes):
     LOGGER.debug('Starting Function queue_drain')
     temp_list = list()
     pre_queue = list()
@@ -454,24 +448,22 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
             elif pre_queue[0][:4] in pre_line_changes and post_queue[0][:4] not in post_line_changes:
                 LOGGER.debug('Function queue_drain pre_queue in pre_line_changes post_queue not in '
                              'post_line_changes PRE: {pre_queue_data} POST: {post_queue_data}'.format(
-                    pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
+                              pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
 
-                if pre_queue[0][:4] in lines_orig_post_list:
-                    data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
-                    temp_list.append(data_set)
+                data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
+                temp_list.append(data_set)
 
-                    pre_queue.pop(0)
+                pre_queue.pop(0)
 
             elif pre_queue[0][:4] not in pre_line_changes and post_queue[0][:4] in post_line_changes:
                 LOGGER.debug('Function queue_drain pre_queue not in pre_line_changes post_queue in '
                              'post_line_changes PRE: {pre_queue_data} POST: {post_queue_data}'.format(
-                    pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
+                              pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
 
-                if post_queue[0][:4] in lines_orig_pre_list:
-                    data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
-                    temp_list.append(data_set)
+                data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
+                temp_list.append(data_set)
 
-                    post_queue.pop(0)
+                post_queue.pop(0)
 
         except TypeError as e:
             LOGGER.warning('Function queue_drain error {e}'.format(e=e))
