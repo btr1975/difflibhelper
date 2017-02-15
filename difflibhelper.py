@@ -405,6 +405,18 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
 
 
 def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_changes):
+    """
+    Function to drain the remaining data
+    :param orig_pre_list:
+    :param orig_post_list:
+    :param pre_line_changes:
+    :param post_line_changes:
+    :return:
+        A List
+        pre_queue
+        post_queue
+
+    """
     LOGGER.debug('Starting Function queue_drain')
     temp_list = list()
     pre_queue = list()
