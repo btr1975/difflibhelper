@@ -6,11 +6,11 @@ __author__ = 'Benjamin P. Trachtenberg'
 __copyright__ = "Copyright (c) 2017, Benjamin P. Trachtenberg"
 __credits__ = 'Benjamin P. Trachtenberg'
 __license__ = ''
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 __version_info__ = tuple([int(num) for num in __version__.split('.')])
 __maintainer__ = 'Benjamin P. Trachtenberg'
 __email__ = 'e_ben_75-python@yahoo.com'
-__status__ = 'Production'
+__status__ = 'Development'
 LOGGER = logging.getLogger(__name__)
 GLOBAL_LINE_NUMBER_FORMAT = '%04d'
 
@@ -129,6 +129,54 @@ def list_of_diffs_pre_post(pre_list, post_list, pre_list_file_name=None, post_li
     combined_list_diff.append('\n')
 
     return pre_list_diff, post_list_diff, combined_list_diff
+
+
+def list_of_diffs_pre_post_shortcut(pre_list, post_list):
+    """
+    Function to take a pre_list, and a post_list
+    :param pre_list:
+    :param post_list:
+    :return:
+        pre_list_diff, post_list_diff
+    """
+    LOGGER.debug('Starting Function list_of_diffs_pre_post_shortcut')
+    pre_list_diff = list()
+    post_list_diff = list()
+    line_number_fix = None
+
+    # Creates a pre file diff
+
+    differ = difflib.Differ()
+    diffs = differ.compare(pre_list, post_list)
+    line_number = 0
+
+    for line in diffs:
+        # split off "  ", "+ ", "- "
+        add_subtract_same_code = line[:2]
+        # if the line is in pre and post files or just pre, increment the line number.
+        if add_subtract_same_code in ("  ", "- "):
+            line_number += 1
+            line_number_fix = GLOBAL_LINE_NUMBER_FORMAT % (line_number,)
+        # if the line is only in pre, print the line number and the text on the line
+        if add_subtract_same_code == "- ":
+            pre_list_diff.append("{} {}".format(line_number_fix, line[2:].strip()))
+
+    # Creates a post file diff
+
+    line_number = 0
+
+    for line in diffs:
+        # split off "  ", "+ ", "- "
+        add_subtract_same_code = line[:2]
+        # if the line is in pre and post files or just post, increment the line number.
+        if add_subtract_same_code in ("  ", "+ "):
+            line_number += 1
+            line_number_fix = GLOBAL_LINE_NUMBER_FORMAT % (line_number,)
+        # if the line is only in post, print the line number and the text on the line
+        if add_subtract_same_code == "+ ":
+            post_list_diff.append("{} {}".format(line_number_fix, line[2:].strip()))
+
+    return pre_list_diff, post_list_diff
 
 
 def list_with_line_numbers(orig_list):
@@ -290,13 +338,11 @@ def get_a_csv_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_
     return temp_csv_list
 
 
-def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_file_name=None):
+def get_a_data_set_diff(pre_list, post_list):
     """
     Function to build a data set diff of pre and post files
     :param pre_list:
     :param post_list:
-    :param pre_list_file_name:
-    :param post_list_file_name:
     :return:
         A data set list
 
@@ -309,8 +355,7 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
     numbered_orig_pre_list = list_with_line_numbers(pre_list)
     numbered_orig_post_list = list_with_line_numbers(post_list)
 
-    pre_list_diff, post_list_diff, *garbage = list_of_diffs_pre_post(pre_list, post_list, pre_list_file_name,
-                                                                     post_list_file_name)
+    pre_list_diff, post_list_diff = list_of_diffs_pre_post_shortcut(pre_list, post_list)
 
     pre_line_changes = extract_just_line_number(pre_list_diff)
 
