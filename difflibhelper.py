@@ -6,7 +6,7 @@ __author__ = 'Benjamin P. Trachtenberg'
 __copyright__ = "Copyright (c) 2017, Benjamin P. Trachtenberg"
 __credits__ = 'Benjamin P. Trachtenberg'
 __license__ = ''
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 __version_info__ = tuple([int(num) for num in __version__.split('.')])
 __maintainer__ = 'Benjamin P. Trachtenberg'
 __email__ = 'e_ben_75-python@yahoo.com'
@@ -324,78 +324,6 @@ def get_a_data_set_diff(pre_list, post_list, pre_list_file_name=None, post_list_
         pre_queue.append(line_numbered_orig_pre_list)
         post_queue.append(line_numbered_orig_post_list)
 
-        LOGGER.debug('Function pre get_a_data_set_diff pre_queue length {preql} post_queue length {postql}'.format(
-            preql=len(pre_queue), postql=len(post_queue)))
-
-        try:
-            if pre_queue[0][:4] not in pre_line_changes and post_queue[0][:4] not in post_line_changes:
-                LOGGER.debug('Function get_a_data_set_diff pre_queue not in pre_line_changes post_queue not in '
-                             'post_line_changes PRE: {pre_queue_data} '
-                             'POST: {post_queue_data}'.format(pre_queue_data=pre_queue[0],
-                                                              post_queue_data=post_queue[0]))
-
-                data_set = ('', pre_queue[0][:4], pre_queue[0][5:], '', post_queue[0][:4], post_queue[0][5:])
-                temp_list.append(data_set)
-
-                pre_queue.pop(0)
-                post_queue.pop(0)
-
-            elif pre_queue[0][:4] in pre_line_changes and post_queue[0][:4] in post_line_changes:
-                LOGGER.debug('Function get_a_data_set_diff pre_queue in pre_line_changes post_queue in '
-                             'post_line_changes PRE: {pre_queue_data} '
-                             'POST: {post_queue_data}'.format(pre_queue_data=pre_queue[0],
-                                                              post_queue_data=post_queue[0]))
-
-                data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', post_queue[0][:4],
-                            post_queue[0][5:])
-                temp_list.append(data_set)
-
-                pre_queue.pop(0)
-                post_queue.pop(0)
-
-            elif pre_queue[0][:4] in pre_line_changes and post_queue[0][:4] not in post_line_changes:
-                LOGGER.debug('Function get_a_data_set_diff pre_queue in pre_line_changes post_queue not in '
-                             'post_line_changes PRE: {pre_queue_data} POST: {post_queue_data}'.format(
-                              pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
-
-                data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
-                temp_list.append(data_set)
-
-                pre_queue.pop(0)
-
-            elif pre_queue[0][:4] not in pre_line_changes and post_queue[0][:4] in post_line_changes:
-                LOGGER.debug('Function get_a_data_set_diff pre_queue not in pre_line_changes post_queue in '
-                             'post_line_changes PRE: {pre_queue_data} POST: {post_queue_data}'.format(
-                              pre_queue_data=pre_queue[0], post_queue_data=post_queue[0]))
-
-                data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
-                temp_list.append(data_set)
-
-                post_queue.pop(0)
-
-        except TypeError as e:
-            LOGGER.warning('Function get_a_data_set_diff error {e}'.format(e=e))
-            try:
-                pre_queue[0][:4]
-
-            except TypeError as e:
-                LOGGER.warning('Function get_a_data_set_diff error with pre_list not able to get numbers '
-                               '{e}'.format(e=e))
-                data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
-                temp_list.append(data_set)
-
-            try:
-                post_queue[0][:4]
-
-            except TypeError as e:
-                LOGGER.warning('Function get_a_data_set_diff error with post_list not able to get numbers '
-                               '{e}'.format(e=e))
-                data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
-                temp_list.append(data_set)
-
-        LOGGER.debug('Function post get_a_data_set_diff pre_queue length {preql} post_queue length {postql}'.format(
-            preql=len(pre_queue), postql=len(post_queue)))
-
     while len(pre_queue) > 0 or len(post_queue) > 0:
         temp_list_drain, pre_queue, post_queue = queue_drain(pre_queue, post_queue, pre_line_changes, post_line_changes)
         temp_list += temp_list_drain
@@ -479,7 +407,9 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
 
         except TypeError as e:
             LOGGER.warning('Function queue_drain error {e}'.format(e=e))
-            check_post_queue = True
+            pre_queue_error = False
+            post_queue_error = False
+
             try:
                 pre_queue[0][:4]
 
@@ -489,20 +419,35 @@ def queue_drain(orig_pre_list, orig_post_list, pre_line_changes, post_line_chang
                 LOGGER.debug('Function post queue_drain pre_queue length {preql} post_queue length {postql}'.format(
                     preql=len(pre_queue), postql=len(post_queue)))
                 pre_queue.clear()
+                pre_queue_error = True
+
+            try:
+                post_queue[0][:4]
+
+            except TypeError as e:
+                LOGGER.warning('Function queue_drain error with post_list not able to get numbers '
+                               '{e}'.format(e=e))
+                LOGGER.debug('Function post queue_drain pre_queue length {preql} post_queue length {postql}'.format(
+                    preql=len(pre_queue), postql=len(post_queue)))
                 post_queue.clear()
-                check_post_queue = False
+                post_queue_error = True
 
-            if check_post_queue:
-                try:
-                    post_queue[0][:4]
+            if not pre_queue_error and post_queue_error:
+                data_set = ('changed', pre_queue[0][:4], pre_queue[0][5:], 'changed', '', '')
+                temp_list.append(data_set)
 
-                except TypeError as e:
-                    LOGGER.warning('Function queue_drain error with post_list not able to get numbers '
-                                   '{e}'.format(e=e))
-                    LOGGER.debug('Function post queue_drain pre_queue length {preql} post_queue length {postql}'.format(
-                        preql=len(pre_queue), postql=len(post_queue)))
-                    pre_queue.clear()
-                    post_queue.clear()
+                pre_queue.pop(0)
+
+            elif pre_queue_error and not post_queue_error:
+                data_set = ('changed', '', '', 'changed', post_queue[0][:4], post_queue[0][5:])
+                temp_list.append(data_set)
+
+                post_queue.pop(0)
+
+            elif pre_queue_error and post_queue_error:
+                pre_queue.clear()
+                post_queue.clear()
+                break
 
         LOGGER.debug('Function post queue_drain pre_queue length {preql} post_queue length {postql}'.format(
             preql=len(pre_queue), postql=len(post_queue)))
