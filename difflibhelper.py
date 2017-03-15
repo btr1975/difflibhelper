@@ -163,6 +163,8 @@ def list_of_diffs_pre_post_shortcut(pre_list, post_list):
 
     # Creates a post file diff
 
+    differ = difflib.Differ()
+    diffs = differ.compare(pre_list, post_list)
     line_number = 0
 
     for line in diffs:
