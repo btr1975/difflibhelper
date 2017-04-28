@@ -6,11 +6,11 @@ __author__ = 'Benjamin P. Trachtenberg'
 __copyright__ = "Copyright (c) 2017, Benjamin P. Trachtenberg"
 __credits__ = 'Benjamin P. Trachtenberg'
 __license__ = ''
-__version__ = '1.0.5'
-__version_info__ = tuple([int(num) for num in __version__.split('.')])
+__status__ = 'prod'
+__version_info__ = (1, 0, 5, __status__)
+__version__ = '.'.join(map(str, __version_info__))
 __maintainer__ = 'Benjamin P. Trachtenberg'
 __email__ = 'e_ben_75-python@yahoo.com'
-__status__ = 'Production'
 LOGGER = logging.getLogger(__name__)
 GLOBAL_LINE_NUMBER_FORMAT = '%04d'
 
