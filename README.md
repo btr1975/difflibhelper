@@ -1,14 +1,17 @@
-# difflibhelper
+# Python Script: difflibhelper
 
-## Written By: Benjamin P. Trachtenberg 
+### Written By: Benjamin P. Trachtenberg
+### If you have any questions e-mail me
 
 ### Contact Information:  e_ben_75-python@yahoo.com
 
 ### LinkedIn: [Ben Trachtenberg](https://www.linkedin.com/in/ben-trachtenberg-3a78496)
+### Docker Hub: [Docker Hub](https://hub.docker.com/r/btr1975)
+### PyPi Page for [difflibhelper](https://pypi.python.org/pypi/difflibhelper)
 
 ### Requirements
 
-* Nothing in particular
+* Nothing Specific besides Python 3.5 and above
 
 ### About
 
