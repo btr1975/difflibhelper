@@ -13,6 +13,11 @@
 
 * Nothing Specific besides Python 3.5 and above
 
+### Installation
+
+* From source "setup.py install"
+* From pip "pip install difflibhelper"
+
 ### About
 
 This script expands on the standard difflib library
