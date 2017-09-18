@@ -8,7 +8,7 @@ packages = [
 setup(
     name='difflibhelper',
     version=__version__,
-    python_requires='~=3.5',
+    python_requires='~=3.3',
     description='This script expands on the standard difflib library',
     keywords='diff file differ differences',
     url='https://github.com/btr1975/difflibhelper',
