@@ -22,7 +22,7 @@ PyPi Page for `difflibhelper <https://pypi.python.org/pypi/difflibhelper>`__
 Requirements
 ~~~~~~~~~~~~
 
--  Nothing Specific besides Python 3.5 and above
+-  Nothing Specific besides Python 3.3 and above
 
 About
 ~~~~~

@@ -11,7 +11,7 @@
 
 ### Requirements
 
-* Nothing Specific besides Python 3.5 and above
+* Nothing Specific besides Python 3.3 and above
 
 ### Installation
 
